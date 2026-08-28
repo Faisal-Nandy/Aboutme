@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faisal — Lembar Kerja Proyek</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#0B1220;
+  --panel:#101A2C;
+  --panel-2:#141F35;
+  --line:#5EEAD4;
+  --line-dim:rgba(94,234,212,.18);
+  --grid:rgba(94,234,212,.055);
+  --paper:#E8EDF5;
+  --muted:#7C8AA5;
+  --safety:#FF7A45;
+  --safety-dim:rgba(255,122,69,.15);
+  --radius:2px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--ink);
+  color:var(--paper);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:44px 44px;
+}
+
+::selection{background:var(--line);color:var(--ink);}
+
+a{color:inherit;text-decoration:none;}
+
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ---------- layout shell ---------- */
+.sheet{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 28px;
+}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,18,32,.86);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line-dim);
+}
+nav .sheet{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px;}
+.brand .tag{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink);
+  background:var(--line);padding:2px 6px;border-radius:2px;letter-spacing:.05em;
+}
+.navlinks{display:flex;gap:32px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.05em;color:var(--muted);}
+.navlinks a{transition:color .2s;position:relative;}
+.navlinks a:hover{color:var(--line);}
+.navlinks a::before{content:attr(data-idx);color:var(--line);margin-right:6px;opacity:.7;}
+@media(max-width:720px){.navlinks{display:none;}}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:120px 0 90px;
+  position:relative;
+  border-bottom:1px solid var(--line-dim);
+}
+.hero .corner{position:absolute;width:18px;height:18px;border:2px solid var(--line);opacity:.55;}
+.hero .corner.tl{top:70px;left:28px;border-right:none;border-bottom:none;}
+.hero .corner.tr{top:70px;right:28px;border-left:none;border-bottom:none;}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--line);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:22px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--line);display:inline-block;}
+h1.headline{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:clamp(34px,6vw,64px);
+  line-height:1.08;
+  letter-spacing:-.01em;
+  max-width:16ch;
+}
+h1.headline em{font-style:normal;color:var(--line);}
+.hero-sub{
+  margin-top:26px;max-width:56ch;color:var(--muted);font-size:16px;
+}
+.hero-meta{
+  display:flex;gap:0;margin-top:52px;border-top:1px solid var(--line-dim);
+  flex-wrap:wrap;
+}
+.hero-meta div{
+  flex:1;min-width:150px;padding:16px 20px 0;border-right:1px solid var(--line-dim);
+}
+.hero-meta div:last-child{border-right:none;}
+.hero-meta .k{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.hero-meta .v{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--paper);margin-top:6px;}
+
+/* ---------- section heading ---------- */
+.section{padding:80px 0;border-bottom:1px solid var(--line-dim);}
+.section:last-of-type{border-bottom:none;}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:44px;flex-wrap:wrap;gap:10px;}
+.sec-head h2{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:600;}
+.sec-head .count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+
+/* ---------- project cards (drawing-sheet signature) ---------- */
+.grid-projects{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:22px;
+}
+.card{
+  position:relative;
+  background:var(--panel);
+  border:1px solid var(--line-dim);
+  padding:22px 22px 20px;
+  transition:border-color .25s, transform .25s;
+}
+.card::before,.card::after,
+.card .cbr,.card .cbl{
+  content:'';position:absolute;width:10px;height:10px;
+  border-color:var(--line);border-style:solid;opacity:0;
+  transition:opacity .25s;
+}
+.card::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.card::after{top:-1px;right:-1px;border-width:2px 2px 0 0;}
+.card .cbl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
+.card .cbr{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.card:hover{border-color:var(--line-dim);transform:translateY(-2px);}
+.card:hover::before,.card:hover::after,.card:hover .cbl,.card:hover .cbr{opacity:1;}
+
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;margin-bottom:16px;}
+.card-top .no{color:var(--line);}
+.cat{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--safety);
+  border:1px solid var(--safety);padding:3px 8px;margin-bottom:14px;
+}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;margin-bottom:10px;line-height:1.3;}
+.card p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+.dim-line{height:1px;background:var(--line-dim);position:relative;margin:14px 0;}
+.dim-line::before,.dim-line::after{content:'';position:absolute;top:-3px;width:1px;height:7px;background:var(--line-dim);}
+.dim-line::before{left:0;}
+.dim-line::after{right:0;}
+.stack{display:flex;flex-wrap:wrap;gap:6px;}
+.stack span{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper);
+  background:var(--panel-2);border:1px solid var(--line-dim);padding:4px 8px;
+}
+
+/* ---------- skills / spec table ---------- */
+.spec-table{width:100%;border-collapse:collapse;}
+.spec-table tr{border-bottom:1px solid var(--line-dim);}
+.spec-table tr:last-child{border-bottom:none;}
+.spec-table td{padding:16px 8px;vertical-align:middle;}
+.spec-table td.label{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--paper);width:220px;}
+.spec-table td.idx{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:44px;}
+.bar-track{height:6px;background:var(--panel-2);position:relative;border:1px solid var(--line-dim);}
+.bar-fill{height:100%;background:var(--line);width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+.spec-table td.pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:50px;text-align:right;}
+
+/* ---------- footer / title block ---------- */
+footer{padding:70px 0 40px;}
+.titleblock{
+  border:1px solid var(--line-dim);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+}
+.titleblock .cell{
+  padding:16px 18px;border-right:1px solid var(--line-dim);border-bottom:1px solid var(--line-dim);
+}
+.titleblock .cell:nth-child(4n){border-right:none;}
+.titleblock .k{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.titleblock .v{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--paper);margin-top:6px;}
+@media(max-width:720px){.titleblock{grid-template-columns:repeat(2,1fr);} .titleblock .cell:nth-child(4n){border-right:1px solid var(--line-dim);} .titleblock .cell:nth-child(2n){border-right:none;}}
+.contact-row{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.contact-row a{color:var(--line);border-bottom:1px solid var(--line-dim);padding-bottom:2px;transition:opacity .2s;}
+.contact-row a:hover{opacity:.7;}
+.foot-note{margin-top:34px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em;}
+
+/* ---------- reveal on scroll ---------- */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .reveal{opacity:1;transform:none;transition:none;}
+  .bar-fill{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="sheet">
+    <div class="brand"><span class="tag">CL</span> Faisal Nandy</div>
+    <div class="navlinks">
+      <a href="#proyek" data-idx="01">PROYEK</a>
+      <a href="#keahlian" data-idx="02">KEAHLIAN</a>
+      <a href="#kontak" data-idx="03">KONTAK</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <div class="sheet">
+    <div class="eyebrow">Lembar Gambar No. 2026-PORTF-01</div>
+    <h1 class="headline">Dari sketsa CAD ke <em>mesin yang menyala.</em></h1>
+    <p class="hero-sub">
+      Mahasiswa Informatika (S1) dengan latar belakang Teknik Elektronika Industri.
+      Terbiasa bolak-balik antara desain — AutoCAD, CorelDRAW, CypCut — dan eksekusi:
+      laser cutting, mikrokontroler, sampai baris kode otomasi. Kumpulan proyek di bawah
+      ini yang sudah pernah dikerjakan.
+    </p>
+    <div class="hero-meta">
+      <div><div class="k">Program Studi</div><div class="v">S1 Informatika</div></div>
+      <div><div class="k">Pengalaman</div><div class="v">PKL — Operator CNC Laser</div></div>
+      <div><div class="k">Fokus</div><div class="v">Embedded · Fabrikasi · Automasi</div></div>
+      <div><div class="k">Skala</div><div class="v">1 : 1 — riil, bukan mockup</div></div>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="proyek">
+  <div class="sheet">
+    <div class="sec-head reveal">
+      <h2>Proyek</h2>
+      <div class="count mono">07 LEMBAR TERLAMPIR</div>
+    </div>
+    <div class="grid-projects">
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">01/07</span></div>
+        <span class="cat">Robotika</span>
+        <h3>Robot Roda Mecanum — LKS</h3>
+        <p>Robot beroda mecanum untuk kompetisi LKS, dikerjakan bersama Argana Radix. Meliputi rancang mekanik, pengendalian motor omnidirectional, dan tuning gerak.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>Mekanik</span><span>Motor Driver</span><span>Mikrokontroler</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">02/07</span></div>
+        <span class="cat">IoT / Embedded</span>
+        <h3>Fingerprint to Google Sheets</h3>
+        <p>Sistem absensi berbasis sidik jari yang mencatat data langsung ke Google Sheets menggunakan ESP8266, tanpa server tambahan.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>ESP8266</span><span>Sensor Fingerprint</span><span>Google Sheets API</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">03/07</span></div>
+        <span class="cat">IoT / Embedded</span>
+        <h3>ESP WebDev — Dashboard IoT</h3>
+        <p>Dashboard web untuk kendali GPIO (LED) secara real-time di ESP32/ESP8266, lengkap dengan penyimpanan konfigurasi lokal.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>ESPAsyncWebServer</span><span>LittleFS</span><span>ArduinoJson</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">04/07</span></div>
+        <span class="cat">Software</span>
+        <h3>Bot Mad Pod Racing</h3>
+        <p>Bot untuk kompetisi CodinGame "Mad Pod Racing" — logika thrust bertahap dan keputusan BOOST berbasis posisi & sudut lintasan.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>Python</span><span>Algoritma</span><span>Vektor 2D</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">05/07</span></div>
+        <span class="cat">Automasi</span>
+        <h3>Skrip Batch — Kalkulator & Shutdown</h3>
+        <p>Kumpulan skrip Windows: kalkulator biaya fabrikasi (embed PowerShell untuk hitungan desimal), timer countdown shutdown, dan pembuat folder proyek otomatis.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>Batch</span><span>PowerShell</span><span>AutoHotkey</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">06/07</span></div>
+        <span class="cat">Web App</span>
+        <h3>Daily Checklist Web App</h3>
+        <p>Aplikasi web checklist harian berulang untuk rutinitas kerja — ringan, tanpa backend rumit, fokus ke kecepatan pakai.</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>HTML/CSS/JS</span><span>LocalState</span></div>
+      </div>
+
+      <div class="card reveal">
+        <span class="cbl"></span><span class="cbr"></span>
+        <div class="card-top"><span>SHEET</span><span class="no">07/07</span></div>
+        <span class="cat">Otomotif / Fabrikasi</span>
+        <h3>KLX150 — Konversi Supermoto</h3>
+        <p>Konversi Kawasaki KLX150 ke gaya supermoto: upgrade kelistrikan, kustomisasi spoke/wheelset, dan pemilihan gear ratio (sprocket).</p>
+        <div class="dim-line"></div>
+        <div class="stack"><span>Kelistrikan</span><span>Wheelset</span><span>Fabrikasi</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" id="keahlian">
+  <div class="sheet">
+    <div class="sec-head reveal">
+      <h2>Keahlian</h2>
+      <div class="count mono">TABEL SPESIFIKASI</div>
+    </div>
+    <table class="spec-table reveal">
+      <tr>
+        <td class="idx">01</td>
+        <td class="label">AutoCAD (REGION/SUBTRACT/DXF)</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="90"></div></div></td>
+        <td class="pct">90%</td>
+      </tr>
+      <tr>
+        <td class="idx">02</td>
+        <td class="label">CorelDRAW &amp; CypCut</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="85"></div></div></td>
+        <td class="pct">85%</td>
+      </tr>
+      <tr>
+        <td class="idx">03</td>
+        <td class="label">ESP32 / ESP8266 (embedded)</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="80"></div></div></td>
+        <td class="pct">80%</td>
+      </tr>
+      <tr>
+        <td class="idx">04</td>
+        <td class="label">Python</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="75"></div></div></td>
+        <td class="pct">75%</td>
+      </tr>
+      <tr>
+        <td class="idx">05</td>
+        <td class="label">Batch Script / PowerShell / AutoHotkey</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="80"></div></div></td>
+        <td class="pct">80%</td>
+      </tr>
+      <tr>
+        <td class="idx">06</td>
+        <td class="label">Operasional Laser Cutting</td>
+        <td><div class="bar-track"><div class="bar-fill" data-pct="88"></div></div></td>
+        <td class="pct">88%</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<footer id="kontak">
+  <div class="sheet">
+    <div class="titleblock reveal">
+      <div class="cell"><div class="k">Nama</div><div class="v">Faisal Nandy</div></div>
+      <div class="cell"><div class="k">Program Studi</div><div class="v">S1 Informatika</div></div>
+      <div class="cell"><div class="k">Pengalaman PKL</div><div class="v">PT. Mutiara Teknik Sejahtera</div></div>
+      <div class="cell"><div class="k">Skala</div><div class="v">1 : 1</div></div>
+      <div class="cell"><div class="k">Basis</div><div class="v">Depok, Jawa Barat</div></div>
+      <div class="cell"><div class="k">Digambar Oleh</div><div class="v">Faisal Nandy</div></div>
+      <div class="cell"><div class="k">Revisi</div><div class="v">01</div></div>
+      <div class="cell"><div class="k">Tanggal</div><div class="v" id="today-date">—</div></div>
+    </div>
+    <div class="contact-row">
+      <a href="mailto:faisalnandi51@gmail.com">EMAIL</a>
+      <a href="https://github.com/Faisal-Nandy">GITHUB</a>
+      <a href="#">LINKEDIN</a>
+      <a href="https://www.instagram.com/faisal.ndy/">INSTAGRAM</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// tanggal otomatis di title block
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+// reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+// bar fill on reveal of skills section
+const bars = document.querySelectorAll('.bar-fill');
+const barIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target;
+      el.style.width = el.dataset.pct + '%';
+      barIO.unobserve(el);
+    }
+  });
+},{threshold:0.4});
+bars.forEach(b=>barIO.observe(b));
+</script>
+
+</body>
+</html>
